@@ -91,10 +91,13 @@ namespace GameCore.Pool
         {
             despawnedClones.Add(_clone);
             spawnedClones.Remove(_clone);
-            _clone.transform.SetParent(DeactivatedChild, false);
+            if (transform != null && this != null)
+            {
+                _clone.transform.SetParent(DeactivatedChild, false);
+            }
             InvokeOnDespawn(_clone);
         }
-        public void Despawn(GameObject _clone, float _timeLive)
+        internal void Despawn(GameObject _clone, float _timeLive)
         {
             if (_timeLive > 0)
             {
@@ -274,9 +277,11 @@ namespace GameCore.Pool
         {
             foreach (KeyValuePair<GameObject, ControlPool> item in PrefabMap)
             {
-                item.Value.DespawnAll_Local();
-                DestroyImmediate(item.Value);
-                //Destrol all pool
+                if (item.Value != null)
+                {
+                    item.Value.DespawnAll_Local();
+                    DestroyImmediate(item.Value.gameObject);
+                }
             }
             PrefabMap.Clear();
         }

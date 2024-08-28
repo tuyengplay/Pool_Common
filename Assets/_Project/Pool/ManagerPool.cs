@@ -115,24 +115,16 @@ namespace GameCore.Pool
         }
         private static void Despawn(GameObject clone, float delay = 0.0f)
         {
-            if (clone != null)
+            ControlPool pool = default;
+            if (Links.TryGetValue(clone, out pool) == true)
             {
-                ControlPool pool = default;
+                Links.Remove(clone);
 
-                if (Links.TryGetValue(clone, out pool) == true)
-                {
-                    Links.Remove(clone);
-
-                    pool.Despawn(clone, delay);
-                }
-                else
-                {
-                    Object.Destroy(clone, delay);
-                }
+                pool.Despawn(clone, delay);
             }
             else
             {
-                Debug.LogWarning("You're attempting to despawn a null gameObject.", clone);
+                Object.Destroy(clone, delay);
             }
         }
         public static void KillAll()
@@ -164,7 +156,6 @@ namespace GameCore.Pool
     }
     public enum NotificationType
     {
-        None,
         SendMessage,
         BroadcastMessage,
         IPoolable,

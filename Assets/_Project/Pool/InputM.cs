@@ -15,7 +15,29 @@ public class InputM : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.A))
         {
+            ManagerResouce.GetPrefab("Hello", (result) =>
+            {
+                ManagerPool.Spawn(result);
+            });
+        }
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            ManagerResouce.GetPrefab("Hello_A", (result) =>
+            {
+                ManagerPool.Spawn(result);
+            });
+        }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
             ManagerPool.DespawnAll();
         }
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            ManagerPool.KillAll();
+        }
+    }
+    private void OnDisable()
+    {
+        ManagerPool.KillAll();
     }
 }
