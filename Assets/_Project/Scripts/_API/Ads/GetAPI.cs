@@ -8,20 +8,56 @@ using UnityEngine.Networking;
 
 public class GetAPI
 {
-    public static IPInfo IPInfoAPI
+    public static IPInfo iPInfoAPI
     {
         get;
         private set;
     }
-    public static TimeDataAPI timeAPI
+    private static TimeDataAPI timeAPI;
+    private static void TimeAPI(Action<TimeDataAPI> _result)
     {
-        get;
-        private set;
+        if (timeAPI != null)
+        {
+            //bat buoc co mang moi cho fetch
+            GetAPIFromUrl($"http://worldtimeapi.org/api/timezone/{iPInfoAPI.timezone}", (data) =>
+            {
+                try
+                {
+                    Debug.Log(timeAPI.ToString());
+                    timeAPI = JsonConvert.DeserializeObject<TimeDataAPI>(data);
+                    _result?.Invoke(timeAPI);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogException(ex);
+                    _result?.Invoke(timeAPI);
+                }
+            });
+        }
     }
-    public static Texture2D textureFlag
+
+    private static Texture2D textureFlag;
+    public static Texture2D TextureFlag(bool _isAPI = false)
     {
-        get;
-        private set;
+        if (_isAPI || PlayerPrefs.HasKey("Flag_Save") == false)
+        {
+            return textureFlag;
+        }
+        else
+        {
+            try
+            {
+                string fullPath = Path.Combine(Application.persistentDataPath, "Flag_Save");
+                byte[] bytes = File.ReadAllBytes(fullPath);
+                Texture2D texture = new Texture2D(256, 192);
+                return texture;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+                return null;
+            }
+        }
     }
     public static void FetchIPInfo()
     {
@@ -29,24 +65,38 @@ public class GetAPI
         {
             try
             {
-                IPInfoAPI = JsonUtility.FromJson<IPInfo>(data);
-                Debug.Log(IPInfoAPI.ToString());
-                LoadTexture($"https://flagcdn.com/256x192/{IPInfoAPI.country.ToLower()}.png", (flag) =>
+                iPInfoAPI = JsonUtility.FromJson<IPInfo>(data);
+                Debug.Log(iPInfoAPI.ToString());
+                LoadTexture($"https://flagcdn.com/256x192/{iPInfoAPI.country.ToLower()}.png", (flag) =>
                 {
                     textureFlag = flag;
                     if (!PlayerPrefs.HasKey("Flag_Save"))
                     {
-                        byte[] flagBinary = textureFlag.EncodeToPNG();
-                        string fullPath = Path.Combine(Application.persistentDataPath, "Flag_Save");
-                        File.WriteAllBytes(fullPath, flagBinary);
-                        PlayerPrefs.SetInt("Flag_Save", 1);
-                        Debug.Log("Save Flag Success _ " + fullPath);
+                        try
+                        {
+                            byte[] flagBinary = textureFlag.EncodeToPNG();
+                            string fullPath = Path.Combine(Application.persistentDataPath, "Flag_Save");
+                            File.WriteAllBytes(fullPath, flagBinary);
+                            PlayerPrefs.SetInt("Flag_Save", 1);
+                            Debug.Log("Save Flag Success _ " + fullPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.LogException(ex);
+                        }
                     }
                 });
-                GetAPIFromUrl($"http://worldtimeapi.org/api/timezone/{IPInfoAPI.timezone}", (data) =>
+                GetAPIFromUrl($"http://worldtimeapi.org/api/timezone/{iPInfoAPI.timezone}", (data) =>
                 {
-                    timeAPI = JsonConvert.DeserializeObject<TimeDataAPI>(data);
-                    Debug.Log(timeAPI.ToString());
+                    try
+                    {
+                        timeAPI = JsonConvert.DeserializeObject<TimeDataAPI>(data);
+                        Debug.Log(timeAPI.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogException(ex);
+                    }
                 });
             }
             catch (Exception ex)
@@ -55,7 +105,7 @@ public class GetAPI
             }
         }, error =>
         {
-            IPInfoAPI = null;
+            iPInfoAPI = null;
             Debug.Log("Error IP :" + error);
         });
     }
@@ -67,7 +117,7 @@ public class GetAPI
             _result?.Invoke(data);
         }, (error =>
         {
-            IPInfoAPI = null;
+            _result?.Invoke(null);
             Debug.Log("Error API :" + error);
         }));
     }
@@ -151,6 +201,13 @@ public class GetAPI
         public override string ToString()
         {
             return $"Day Of Week: {dayOfWeek}\nDay Of Year: {dayOfYear}\nDatetime: {dateTime.ToString("yyyy-MM-dd HH:mm:ss")}\nWeek Number: {weekNumber}";
+        }
+        public TimeDataAPI()
+        {
+            dayOfWeek = 0;
+            dayOfYear = 0;
+            dateTime = DateTime.Now;
+            weekNumber = 0;
         }
     }
 }
