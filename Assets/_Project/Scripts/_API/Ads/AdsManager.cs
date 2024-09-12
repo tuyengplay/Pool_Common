@@ -3,14 +3,25 @@ using UnityEngine;
 
 public class AdsManager : MonoBehaviour
 {
-    [SerializeField]
+#if UNITY_ANDROID
     string bannerAdUnitId = "Android_banner";
-    [SerializeField]
     string interstitialAdUnitId = "Android_banner";
-    [SerializeField]
     string rewardAdUnitId = "Android_banner";
-    [SerializeField]
     private string keyMax = "Key MAX of Game";
+    private string appOpenUnitIdADMOB = "Android_AOA";
+    private string bannerCollapUnitIdADMOB = "Android_collap";
+    private bool useNative = false;
+    private string nativeUnitIdADMOB = "Android_native";
+#else
+    string bannerAdUnitId = "IOS_banner";
+    string interstitialAdUnitId = "IOS_banner";
+    string rewardAdUnitId = "IOS_banner";
+    private string keyMax = "Key MAX of Game";
+    private string appOpenUnitIdADMOB = "IOS_AOA";
+    private string bannerCollapUnitIdADMOB = "IOS_collap";
+    private bool useNative = false;
+    private string nativeUnitIdADMOB = "IOS_native";
+#endif
     #region Setup
     //Interstitial
     private int retryAttemptInterstitial;
@@ -27,9 +38,10 @@ public class AdsManager : MonoBehaviour
     #endregion
     void Start()
     {
-        InitAds();
+        InitAdsMAX();
     }
-    public void InitAds()
+    #region MAX
+    public void InitAdsMAX()
     {
 #if ADS
         MaxSdkCallbacks.OnSdkInitializedEvent += (MaxSdkBase.SdkConfiguration sdkConfiguration) =>
@@ -77,7 +89,7 @@ public class AdsManager : MonoBehaviour
         MaxSdk.DestroyBanner(bannerAdUnitId);
 #endif
     }
-    public void ShowInterstitial_MAX(Action<bool> _done, AdLocation _location, bool _isShowImmediately = false, string _locationSub = "")
+    public void ShowInterstitial_MAX(Action<bool> _done, string _location, bool _isShowImmediately = false, string _locationSub = "")
     {
         isActiveInterstitial = false;
         isInterstitialShowing = true;
@@ -107,7 +119,7 @@ public class AdsManager : MonoBehaviour
         }
 #endif
     }
-    public void ShowReward_MAX(Action<bool> _done, AdLocation _location)
+    public void ShowReward_MAX(Action<bool> _done, string _location)
     {
         isRewardShowing = true;
         isClaimReward = false;
@@ -275,9 +287,6 @@ public class AdsManager : MonoBehaviour
     }
     #endregion
 #endif
+    #endregion MAX
+}
 
-}
-public enum AdLocation
-{
-    EndGame,
-}

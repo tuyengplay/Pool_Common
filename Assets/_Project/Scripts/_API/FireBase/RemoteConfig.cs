@@ -1,4 +1,6 @@
+#if FIRE_BASE
 using Firebase.RemoteConfig;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,11 +13,13 @@ public class RemoteConfig
         try
         {
             long value = 0;
+#if FIRE_BASE
             if (remoteConfigKeys.Contains(_key.ToString()))
             {
                 value = FirebaseRemoteConfig.DefaultInstance.GetValue(_key.ToString()).LongValue;
             }
             else
+#endif
             {
                 value = (long)configDefault[_key];
             }
@@ -32,11 +36,13 @@ public class RemoteConfig
         try
         {
             double value = 0;
+#if FIRE_BASE
             if (remoteConfigKeys.Contains(_key.ToString()))
             {
                 value = FirebaseRemoteConfig.DefaultInstance.GetValue(_key.ToString()).DoubleValue;
             }
             else
+#endif
             {
                 value = (double)configDefault[_key];
             }
@@ -53,11 +59,13 @@ public class RemoteConfig
         try
         {
             bool value = false;
+#if FIRE_BASE
             if (remoteConfigKeys.Contains(_key.ToString()))
             {
                 value = FirebaseRemoteConfig.DefaultInstance.GetValue(_key.ToString()).BooleanValue;
             }
             else
+#endif
             {
                 value = (bool)configDefault[_key];
             }
@@ -74,11 +82,13 @@ public class RemoteConfig
         try
         {
             string value = default;
+#if FIRE_BASE
             if (remoteConfigKeys.Contains(_key.ToString()))
             {
                 value = FirebaseRemoteConfig.DefaultInstance.GetValue(_key.ToString()).StringValue;
             }
             else
+#endif
             {
                 value = (string)configDefault[_key];
             }
@@ -95,11 +105,13 @@ public class RemoteConfig
         string value = default;
         try
         {
+#if FIRE_BASE
             if (remoteConfigKeys.Contains(_key.ToString()))
             {
                 value = FirebaseRemoteConfig.DefaultInstance.GetValue(_key.ToString()).StringValue;
             }
             else
+#endif
             {
                 value = (string)configDefault[_key];
             }
@@ -145,18 +157,24 @@ public class RemoteConfig
 
     public void FetchDataNoww()
     {
+#if FIRE_BASE
         Task fetchTask = FirebaseRemoteConfig.DefaultInstance.FetchAsync(TimeSpan.FromSeconds(0));
         fetchTask.ContinueWith(FetchComplete);
+#endif
     }
     public async void FetchDataNow()
     {
+#if FIRE_BASE
         Task fetchTask = FirebaseRemoteConfig.DefaultInstance.FetchAsync(TimeSpan.FromSeconds(0));
         await fetchTask.ContinueWith(FetchComplete);
+#endif
     }
     public async Task FetchDataAsync()
     {
+#if FIRE_BASE
         Task fetchTask = FirebaseRemoteConfig.DefaultInstance.FetchAsync(TimeSpan.FromHours(2));
         await fetchTask.ContinueWith(FetchComplete);
+#endif
     }
     private void FetchComplete(Task _fetchTask)
     {
@@ -173,7 +191,7 @@ public class RemoteConfig
             else if (_fetchTask.IsCompleted)
             {
             }
-
+#if FIRE_BASE
             ConfigInfo info = FirebaseRemoteConfig.DefaultInstance.Info;
             switch (info.LastFetchStatus)
             {
@@ -204,6 +222,7 @@ public class RemoteConfig
                         break;
                     }
             }
+#endif
 
         }
         catch (Exception e)
@@ -212,6 +231,7 @@ public class RemoteConfig
             throw;
         }
     }
+#if FIRE_BASE
     public async void FetchAndActivateAsync(Task fetchTask, ConfigInfo info)
     {
         await FirebaseRemoteConfig.DefaultInstance.FetchAndActivateAsync();
@@ -230,6 +250,7 @@ public class RemoteConfig
             remoteConfigKeys.Add(key);
         }
     }
+#endif
     #endregion Fetch
 }
 public enum KeyConfig

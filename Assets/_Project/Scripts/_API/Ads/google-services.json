@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "714342713659",
+    "project_id": "perfect-puzzle-satisfying-game",
+    "storage_bucket": "perfect-puzzle-satisfying-game.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714342713659:android:4aec643cae1ba718fe0f1e",
+        "android_client_info": {
+          "package_name": "com.gplay.perfect.puzzle.satisfying.game"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1JhIF_qYoAGtwrb9qTXxc0WWDFztmB6E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

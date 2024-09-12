@@ -22,7 +22,7 @@ public class GameServices : SingletonClass<GameServices>, IService
         }).Take(1)
         .SelectMany(value =>
         {
-            Debug.Log("Co Intenet Check Va Fix Khoi tao");
+            GetAPI.FetchIPInfo();
             return FirebaseManager.CheckAndFixDependenciesAsync().ToObservable();
         })
         .ObserveOnMainThread()
@@ -39,7 +39,7 @@ public class GameServices : SingletonClass<GameServices>, IService
                 return Observable.Throw<Unit>(new Exception("Could not resolve all Firebase dependencies: "));
             }
         })
-        .Timeout(TimeSpan.FromSeconds(60))
+        .Timeout(TimeSpan.FromSeconds(80))
         .Subscribe(value =>
         {
             FetchFirebaseSubject.OnNext(true);
