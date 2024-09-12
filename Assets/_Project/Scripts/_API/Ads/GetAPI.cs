@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -9,15 +10,19 @@ public class GetAPI
 {
     public static IPInfo IPInfoAPI
     {
-        private set;
         get;
+        private set;
     }
     public static TimeDataAPI timeAPI
     {
         get;
         private set;
     }
-    public static Texture2D textureFlag;
+    public static Texture2D textureFlag
+    {
+        get;
+        private set;
+    }
     public static void FetchIPInfo()
     {
         RequestAPI("https://ipinfo.io/json").Subscribe(data =>
@@ -29,6 +34,14 @@ public class GetAPI
                 LoadTexture($"https://flagcdn.com/256x192/{IPInfoAPI.country.ToLower()}.png", (flag) =>
                 {
                     textureFlag = flag;
+                    if (!PlayerPrefs.HasKey("Flag_Save"))
+                    {
+                        byte[] flagBinary = textureFlag.EncodeToPNG();
+                        string fullPath = Path.Combine(Application.persistentDataPath, "Flag_Save");
+                        File.WriteAllBytes(fullPath, flagBinary);
+                        PlayerPrefs.SetInt("Flag_Save", 1);
+                        Debug.Log("Save Flag Success _ " + fullPath);
+                    }
                 });
                 GetAPIFromUrl($"http://worldtimeapi.org/api/timezone/{IPInfoAPI.timezone}", (data) =>
                 {
