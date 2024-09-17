@@ -517,5 +517,10 @@ namespace TuyenGameCore
 
             return sprite;
         }
+
+        public static RectTransform rect(this Transform _transform)
+        {
+            return _transform as RectTransform;
+        }
     }
 }
