@@ -6,7 +6,7 @@ namespace TuyenGameCore.Poolable
     {
         public static Dictionary<GameObject, ControlPool> Links = new Dictionary<GameObject, ControlPool>();
         #region SpawnComponent
-        public static T Spawn<T>(T _prefab, float _timeLive = 0.0f) where T : Component
+        public static T Spawn<T>(T _prefab) where T : Component
         {
             if (_prefab == null)
             {
@@ -27,7 +27,7 @@ namespace TuyenGameCore.Poolable
             return clone != null ? clone.GetComponent<T>() : null;
         }
 
-        public static T Spawn<T>(T _prefab, Vector3 _position, Quaternion _rotation, Transform _parent = null, float _timeLive = 0.0f)
+        public static T Spawn<T>(T _prefab, Vector3 _position, Quaternion _rotation, Transform _parent = null)
             where T : Component
         {
             if (_prefab == null)
@@ -35,7 +35,7 @@ namespace TuyenGameCore.Poolable
                 Debug.LogError("Null Prefabs");
                 return null;
             }
-            var clone = Spawn(_prefab.gameObject, _position, _rotation, _parent, _timeLive);
+            var clone = Spawn(_prefab.gameObject, _position, _rotation, _parent);
             return clone != null ? clone.GetComponent<T>() : null;
         }
         #endregion SpawnComponent
